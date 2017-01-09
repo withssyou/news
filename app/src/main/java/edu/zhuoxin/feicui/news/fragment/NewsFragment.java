@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,12 +46,19 @@ public class NewsFragment extends Fragment {
     private String type = "top";
     @BindView(R.id.fragment_news_lv)
     ListView listView;
+    @BindView(R.id.fragment_news_flush)
+    SwipeRefreshLayout refush;
     List<NewsInfo> newsInfoList = new ArrayList<>();
     NewsAdapter adapter;
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+
+            if (refush.isRefreshing()){  //如果progressbar当前正在显示
+                refush.setRefreshing(false);//设置progressbar隐藏
+                Toast.makeText(getContext(),"更新成功",Toast.LENGTH_SHORT).show();
+            }
             switch (msg.what) {
                 case App.SUCCEED:
                     adapter.notifyDataSetChanged();
@@ -108,6 +116,15 @@ public class NewsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news, container, false);
         ButterKnife.bind(this, view);
+        //设置下拉刷新
+        refush.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        refush.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initListDatas();
+            }
+        });
+
         return view;
     }
 
