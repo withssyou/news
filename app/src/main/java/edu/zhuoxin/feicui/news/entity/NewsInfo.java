@@ -7,9 +7,17 @@ package edu.zhuoxin.feicui.news.entity;
 public class NewsInfo {
     String title ;
     String date;
-    String category;
+    String author_name;
     String url ;
     String imageurl;
+
+    public NewsInfo(String title, String date, String author_name, String url, String imageurl) {
+        this.title = title;
+        this.date = date;
+        this.author_name = author_name;
+        this.url = url;
+        this.imageurl = imageurl;
+    }
 
     public String getTitle() {
         return title;
@@ -27,12 +35,12 @@ public class NewsInfo {
         this.date = date;
     }
 
-    public String getCategory() {
-        return category;
+    public String getAuthor_name() {
+        return author_name;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setAuthor_name(String author_name) {
+        this.author_name = author_name;
     }
 
     public String getUrl() {

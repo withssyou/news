@@ -3,6 +3,9 @@ package edu.zhuoxin.feicui.news.ui;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,16 +18,24 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import edu.zhuoxin.feicui.news.R;
+import edu.zhuoxin.feicui.news.fragment.NewsFragment;
+import edu.zhuoxin.feicui.news.fragment.ViewPagerFragment;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    /**
+     * 当前显示的fragment
+     */
+    Fragment mCurrentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //初始化系统控件
-       initSystemViews();
+        initSystemViews();
+        //默认显示新闻页面
+        showNewsFragment();
     }
 
     /**
@@ -54,10 +65,6 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         //获取头部控件
-
-
-
-
     }
 
     //重写按下返回键的方法
@@ -70,6 +77,7 @@ public class HomeActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
     //引入菜单
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -77,6 +85,7 @@ public class HomeActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+
     //菜单的监听事件
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -92,6 +101,7 @@ public class HomeActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
+
     //Navigation每一项的监听事件
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -100,11 +110,12 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+            //添加ViewPagerFragment
+            showNewsFragment();
         } else if (id == R.id.nav_gallery) {
-            Toast.makeText(this,"-----------",Toast.LENGTH_LONG).show();
+            //添加图片fragment
         } else if (id == R.id.nav_slideshow) {
-
+            //添加收藏fragment
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
@@ -117,4 +128,15 @@ public class HomeActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private void showNewsFragment() {
+        String[] type = new String[]{NewsFragment.TYPE_TOUTIAO, NewsFragment.TYPE_KEJI, NewsFragment.TYPE_GUOJI, NewsFragment.TYPE_SHEHUI};
+        ViewPagerFragment viewPagerFragment = new ViewPagerFragment(type);
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.activity_home_fl, viewPagerFragment);
+        mCurrentFragment = viewPagerFragment;
+        ft.commit();
+    }
+
 }

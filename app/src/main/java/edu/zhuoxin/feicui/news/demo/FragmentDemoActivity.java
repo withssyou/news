@@ -57,6 +57,7 @@ public class FragmentDemoActivity extends AppCompatActivity implements RadioGrou
 //        setContentView(R.layout.activity_fragmentdemo);
         setContentView(R.layout.activity_dianping);
         ButterKnife.bind(this);
+
         showFragmentShouye();
         rg.setOnCheckedChangeListener(this);
         Log.i("Tag", "=================onCreate");
@@ -191,6 +192,4 @@ public class FragmentDemoActivity extends AppCompatActivity implements RadioGrou
             ft.hide(tuanfouF);
         }
     }
-
-
 }
