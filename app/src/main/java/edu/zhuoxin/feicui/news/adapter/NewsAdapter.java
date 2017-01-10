@@ -11,6 +11,7 @@ import com.squareup.picasso.Picasso;
 import edu.zhuoxin.feicui.news.R;
 import edu.zhuoxin.feicui.news.base.BaseBaseAdapter;
 import edu.zhuoxin.feicui.news.entity.NewsInfo;
+import edu.zhuoxin.feicui.news.utils.HttpClientUtil;
 
 /**
  * Created by Administrator on 2017/1/9.
@@ -44,7 +45,20 @@ public class NewsAdapter extends BaseBaseAdapter<NewsInfo>{
                 .load(info.getImageurl()) //去哪里加载图片
                 .error(R.mipmap.ic_launcher)//图片加载失败的默认图片
                 .into(holder.image);    //加载出来图片之后赋值的控件
+        //  ImageLoader
+        /**
+         *  存在问题:
+         *      1.异步加载图片，可能造成内存溢出(OOM)     ----->对图片进行压缩，使用三级缓存
+         *      2.listview图片错位的问题                  ------> 通过设置标记，判断标记是否属于该条内容，是才加载
+         *
+         *      3.view的频繁创建，导致内存溢出            ----->使用convertView
+         *      4.频繁的findviewbyid造成资源浪费          ------>使用viewHolder 减少findViewById的次数
+         *
+         */
+//        HttpClientUtil.setImage(info.getImageurl(),holder.image);
+
         return convertView;
+
     }
     class  NewsHolder{
         ImageView image;

@@ -1,5 +1,7 @@
 package edu.zhuoxin.feicui.news.fragment;
 
+import android.app.ActivityOptions;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +11,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -27,6 +30,7 @@ import edu.zhuoxin.feicui.news.api.HttpClientListener;
 import edu.zhuoxin.feicui.news.app.App;
 import edu.zhuoxin.feicui.news.entity.NewsInfo;
 import edu.zhuoxin.feicui.news.entity.NewstoJuhe;
+import edu.zhuoxin.feicui.news.ui.NewsActivity;
 import edu.zhuoxin.feicui.news.utils.HttpClientUtil;
 
 /**
@@ -47,7 +51,7 @@ public class NewsFragment extends Fragment {
     @BindView(R.id.fragment_news_lv)
     ListView listView;
     @BindView(R.id.fragment_news_flush)
-    SwipeRefreshLayout refush;
+    SwipeRefreshLayout refrush;
     List<NewsInfo> newsInfoList = new ArrayList<>();
     NewsAdapter adapter;
     Handler handler = new Handler() {
@@ -55,8 +59,8 @@ public class NewsFragment extends Fragment {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 
-            if (refush.isRefreshing()){  //如果progressbar当前正在显示
-                refush.setRefreshing(false);//设置progressbar隐藏
+            if (refrush.isRefreshing()){  //如果progressbar当前正在显示
+                refrush.setRefreshing(false);//设置progressbar隐藏
                 Toast.makeText(getContext(),"更新成功",Toast.LENGTH_SHORT).show();
             }
             switch (msg.what) {
@@ -117,8 +121,8 @@ public class NewsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_news, container, false);
         ButterKnife.bind(this, view);
         //设置下拉刷新
-        refush.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-        refush.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        refrush.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        refrush.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 initListDatas();
@@ -136,6 +140,32 @@ public class NewsFragment extends Fragment {
         adapter.setData(newsInfoList);
         listView.setAdapter(adapter);
         initListDatas();
+        //给listview设置监听事件
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                View iv = view.findViewById(R.id.adapter_newsfragment_item_iv);
+                //跳转到下个页面(带值）
+                String title = adapter.getItem(position).getTitle();
+                String imageUrl = adapter.getItem(position).getImageurl();
+                String url = adapter.getItem(position).getUrl();
+
+                Intent intent = new Intent(getContext(),NewsActivity.class);
+
+                intent.putExtra("title",title);
+                intent.putExtra("imageUrl",imageUrl);
+                intent.putExtra("url",url);
+
+                startActivity(intent,ActivityOptions.makeSceneTransitionAnimation(getActivity(),iv,"newsImage").toBundle());
+
+            }
+        });
+
+
+
+
+
 
     }
 

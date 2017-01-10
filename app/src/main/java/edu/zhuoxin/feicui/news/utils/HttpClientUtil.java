@@ -1,5 +1,11 @@
 package edu.zhuoxin.feicui.news.utils;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.ImageView;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -58,5 +64,41 @@ public class HttpClientUtil {
                 conn.disconnect();//关闭连接
             }
         }
+    }
+    /**给图片控件设置图片*/
+    public static void setImage(final String imageUrl , final ImageView targetView /*listener 图片加载成功之后的回调*/){
+        new AsyncTask<String, Void, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(String... params) {
+                HttpURLConnection conn = null;
+                try {
+                    Log.i("^Tag",params[0]);
+                    conn = (HttpURLConnection) new URL(params[0]).openConnection();
+                    conn.setRequestMethod("GET");//设置请求方式
+                    conn.setReadTimeout(15000);//设置读取超时
+                    conn.setConnectTimeout(8000);//设置连接超时
+                    conn.connect();
+                    if (conn.getResponseCode() == 200){//如果状态码等于200，连接成功
+                        Bitmap bitmap = BitmapFactory.decodeStream(conn.getInputStream());
+                        return bitmap;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }finally {
+                    if (conn != null){
+                        conn.disconnect();//关闭连接
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                super.onPostExecute(bitmap);
+                if (bitmap != null){
+                    targetView.setImageBitmap(bitmap);
+                }
+            }
+        }.execute(imageUrl);
     }
 }

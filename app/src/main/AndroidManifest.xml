@@ -24,8 +24,8 @@
 
         </activity>
         <activity android:name=".demo.FragmentDemoActivity">
-
         </activity>
+        <activity android:name=".ui.NewsActivity"></activity>
     </application>
 
 </manifest>
