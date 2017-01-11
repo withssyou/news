@@ -26,6 +26,9 @@
         <activity android:name=".demo.FragmentDemoActivity">
         </activity>
         <activity android:name=".ui.NewsActivity"></activity>
+        <activity android:name=".ui.GuideActivity">
+
+        </activity>
     </application>
 
 </manifest>

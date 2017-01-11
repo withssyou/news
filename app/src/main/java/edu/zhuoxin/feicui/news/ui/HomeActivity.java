@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import edu.zhuoxin.feicui.news.R;
+import edu.zhuoxin.feicui.news.fragment.ImageFragment;
 import edu.zhuoxin.feicui.news.fragment.NewsFragment;
 import edu.zhuoxin.feicui.news.fragment.ViewPagerFragment;
 
@@ -114,6 +115,7 @@ public class HomeActivity extends AppCompatActivity
             showNewsFragment();
         } else if (id == R.id.nav_gallery) {
             //添加图片fragment
+            showImageFragment();
         } else if (id == R.id.nav_slideshow) {
             //添加收藏fragment
         } else if (id == R.id.nav_manage) {
@@ -128,7 +130,7 @@ public class HomeActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
+    /**显示新闻的fragment*/
     private void showNewsFragment() {
         String[] type = new String[]{NewsFragment.TYPE_TOUTIAO, NewsFragment.TYPE_KEJI, NewsFragment.TYPE_GUOJI, NewsFragment.TYPE_SHEHUI};
         ViewPagerFragment viewPagerFragment = new ViewPagerFragment(type);
@@ -136,6 +138,18 @@ public class HomeActivity extends AppCompatActivity
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.activity_home_fl, viewPagerFragment);
         mCurrentFragment = viewPagerFragment;
+        ft.commit();
+    }
+
+    /**
+     * 显示图片fragment
+     */
+    private void showImageFragment(){
+        ImageFragment imageFragment = new ImageFragment();
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.activity_home_fl, imageFragment);
+        mCurrentFragment = imageFragment;
         ft.commit();
     }
 

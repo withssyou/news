@@ -46,7 +46,7 @@ public class NewsActivity extends AppCompatActivity {
         //设置Actionbar
         setSupportActionBar(toolbar);   //设置actionbar为toolbar
         getSupportActionBar().setTitle(title);//给toolbar赋值
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true); //设置回退按钮可用
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); //设置回退按钮可用
 
         //设置图片
         Picasso.with(this)
