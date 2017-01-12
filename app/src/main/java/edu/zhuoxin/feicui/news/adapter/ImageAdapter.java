@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -25,7 +24,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
 //    List<Integer> heights;
     public ImageAdapter(Context context) {
         this.context = context;
-
     }
 
     public List<ImageInfo> getList() {
@@ -69,4 +67,5 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
             iv = (ImageView) itemView.findViewById(R.id.adapter_image_item_iv);
         }
     }
+
 }

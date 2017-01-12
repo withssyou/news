@@ -1,6 +1,7 @@
 package edu.zhuoxin.feicui.news.fragment;
 
 import android.app.ActivityOptions;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,6 +9,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,7 @@ import edu.zhuoxin.feicui.news.R;
 import edu.zhuoxin.feicui.news.adapter.NewsAdapter;
 import edu.zhuoxin.feicui.news.api.HttpClientListener;
 import edu.zhuoxin.feicui.news.app.App;
+import edu.zhuoxin.feicui.news.db.NewsDao;
 import edu.zhuoxin.feicui.news.entity.NewsInfo;
 import edu.zhuoxin.feicui.news.entity.NewstoJuhe;
 import edu.zhuoxin.feicui.news.ui.NewsActivity;
@@ -43,10 +46,7 @@ public class NewsFragment extends Fragment {
     public static final String TYPE_GUOJI = "guoji";
     public static final String TYPE_SHEHUI = "shehui";
 
-    public NewsFragment(String type) {
-        this.type = type;
-    }
-
+    private NewsDao newsDao;
     private String type = "top";
     @BindView(R.id.fragment_news_lv)
     ListView listView;
@@ -59,19 +59,19 @@ public class NewsFragment extends Fragment {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 
-            if (refrush.isRefreshing()){  //如果progressbar当前正在显示
+            if (refrush.isRefreshing()) {  //如果progressbar当前正在显示
                 refrush.setRefreshing(false);//设置progressbar隐藏
-                Toast.makeText(getContext(),"更新成功",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "更新成功", Toast.LENGTH_SHORT).show();
             }
             switch (msg.what) {
                 case App.SUCCEED:
                     adapter.notifyDataSetChanged();
                     break;
                 case App.FALILER:
-                    Toast.makeText(getContext(),msg.obj.toString(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), msg.obj.toString(), Toast.LENGTH_LONG).show();
                     break;
                 case App.EXCEPTION:
-                    Toast.makeText(getContext(),((Exception)msg.obj).getMessage(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), ((Exception) msg.obj).getMessage(), Toast.LENGTH_LONG).show();
                     break;
             }
         }
@@ -114,6 +114,9 @@ public class NewsFragment extends Fragment {
         }
     };
 
+    public NewsFragment(String type) {
+        this.type = type;
+    }
 
     @Nullable
     @Override
@@ -135,12 +138,13 @@ public class NewsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        newsDao = new NewsDao(getContext());
 
         adapter = new NewsAdapter(getContext());
         adapter.setData(newsInfoList);
         listView.setAdapter(adapter);
         initListDatas();
-        //给listview设置监听事件
+        //给listview设置点击事件
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -151,22 +155,54 @@ public class NewsFragment extends Fragment {
                 String imageUrl = adapter.getItem(position).getImageurl();
                 String url = adapter.getItem(position).getUrl();
 
-                Intent intent = new Intent(getContext(),NewsActivity.class);
+                Intent intent = new Intent(getContext(), NewsActivity.class);
 
-                intent.putExtra("title",title);
-                intent.putExtra("imageUrl",imageUrl);
-                intent.putExtra("url",url);
+                intent.putExtra("title", title);
+                intent.putExtra("imageUrl", imageUrl);
+                intent.putExtra("url", url);
 
-                startActivity(intent,ActivityOptions.makeSceneTransitionAnimation(getActivity(),iv,"newsImage").toBundle());
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity(), iv, "newsImage").toBundle());
 
             }
         });
-
-
-
-
-
-
+        //给listview设置长按事件  弹出对话框  将长按的该条数据存入数据库
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                //显示弹出对话框
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("是否收藏");
+//                builder.setMessage("---")
+//                builder.setIcon();
+                 //设置积极按钮      参数一：按钮的名字   参数二：按钮的监听事件
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //点击弹出对话框的确定按钮 ，将该条数据插入数据库中
+                        boolean b = newsDao.insert(adapter.getItem(position));
+                        if (b) {
+                            Toast.makeText(getContext(), "收藏成功", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getContext(), "已收藏该内容，不能重复收藏", Toast.LENGTH_LONG).show();
+                        }
+                        //让对话框消失
+                        dialog.dismiss();
+                    }
+                });
+                //设置消极按钮
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                //创建对话框并显示
+                builder.create().show();
+                //true 中断点击事件继续向下传递    只响应长按事件
+                //false  不中断                    响应了长按事件之后进而响应点击事件
+                return true;
+            }
+        });
     }
 
     /**

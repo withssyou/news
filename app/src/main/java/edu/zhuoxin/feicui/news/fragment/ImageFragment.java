@@ -43,7 +43,6 @@ public class ImageFragment extends Fragment {
                 switch (msg.what){
                     case App.IMAGR_LOAG:
                         ImagetoGank gank = (ImagetoGank) msg.obj;
-                        Log.i("Tag",gank.getResults().size()+"==================");
                         data.addAll(gank.getResults());
                         adapter.notifyDataSetChanged();
                         break;
@@ -63,7 +62,6 @@ public class ImageFragment extends Fragment {
         
 //        initData();
         //创建适配器
-        Log.i("Tag","------------------1");
         adapter = new ImageAdapter(getContext());
         adapter.setList(data);
         //设置其中的每一项是否拥有固定大小。
@@ -72,7 +70,6 @@ public class ImageFragment extends Fragment {
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         rv.setLayoutManager(layoutManager);
         rv.setItemAnimator(new DefaultItemAnimator());
-        Log.i("Tag","------------------2");
         //设置适配器
         rv.setAdapter(adapter);
         return view;
@@ -92,7 +89,6 @@ public class ImageFragment extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.i("Tag","------------------3");
                 HttpClientUtil.getResult(App.IMAGE_BASE+App.IMAGE_PATH ,handler);
             }
         }).start();

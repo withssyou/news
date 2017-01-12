@@ -139,7 +139,6 @@ public class HttpClientUtil {
             //失败返回的结果
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.i("Tag","------------------4");
                 handler.sendEmptyMessage(0x18);
             }
             //成功返回的结果
@@ -151,15 +150,11 @@ public class HttpClientUtil {
                 System.out.println(result);
                 Gson gson = new Gson();
                 ImagetoGank data = gson.fromJson(result,ImagetoGank.class);
-                Log.i("Tag","------------------5");
                 Message msg = handler.obtainMessage();
                 msg.what = App.IMAGR_LOAG;
                 msg.obj = data;
                 handler.sendMessage(msg);
             }
         });
-
     }
-
-
 }

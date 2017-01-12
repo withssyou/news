@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import edu.zhuoxin.feicui.news.R;
+import edu.zhuoxin.feicui.news.fragment.CollectionFragment;
 import edu.zhuoxin.feicui.news.fragment.ImageFragment;
 import edu.zhuoxin.feicui.news.fragment.NewsFragment;
 import edu.zhuoxin.feicui.news.fragment.ViewPagerFragment;
@@ -112,12 +113,26 @@ public class HomeActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             //添加ViewPagerFragment
-            showNewsFragment();
+            //判断当前显示的fragment是否跟用户点击的fragment相同，不相同，添加，相同，吐司提示
+            if (!(mCurrentFragment instanceof ViewPagerFragment)) {
+                showNewsFragment();
+            }else {
+                Toast.makeText(this,"无需更新",Toast.LENGTH_LONG).show();
+            }
         } else if (id == R.id.nav_gallery) {
             //添加图片fragment
-            showImageFragment();
+            if (!(mCurrentFragment instanceof ImageFragment )) {
+                showImageFragment();
+            }else {
+                Toast.makeText(this,"无需更新",Toast.LENGTH_LONG).show();
+            }
         } else if (id == R.id.nav_slideshow) {
             //添加收藏fragment
+            if (!(mCurrentFragment instanceof CollectionFragment)) {
+                showCollectionFragment();
+            }else {
+                Toast.makeText(this,"无需更新",Toast.LENGTH_LONG).show();
+            }
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
@@ -152,5 +167,13 @@ public class HomeActivity extends AppCompatActivity
         mCurrentFragment = imageFragment;
         ft.commit();
     }
-
+    /**显示收藏的fragment*/
+    private void showCollectionFragment(){
+        CollectionFragment collectionFragment = new CollectionFragment();
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.activity_home_fl, collectionFragment);
+        mCurrentFragment = collectionFragment;
+        ft.commit();
+    }
 }
